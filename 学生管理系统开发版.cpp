@@ -18,20 +18,20 @@ bool cmp2 (stu x, stu y) {
 	return strcmp(x.student_id,y.student_id) == -1;
 }
 bool cmp3 (stu x, stu y) {
-	return x.student_id > y.student_id;
+	return x.sco > y.sco;
 }
 bool cmp4 (stu x, stu y) {
-	return x.student_id < y.student_id;
+	return x.sco < y.sco;
 }
 void out(stu a) {
-	printf("学号：%s\t",a.student_id);
-	printf("姓名：%s\t",a.name);
-	printf("院系：%s\t",a.yuan_xi);
-	printf("班级：%s\t",a.class_num);
-	printf("辅导员:%s\t",a.fudaoyuan);
-	printf("户籍：%s\t",a.home);
-	printf("电话：%s\t",a.tel);
-	printf("加权成绩：%f\n",a.sco);
+	printf("学号：%-10s ",a.student_id);
+	printf("姓名：%-8s ",a.name);
+	printf("院系：%-12s ",a.yuan_xi);
+	printf("班级：%-8s ",a.class_num);
+	printf("辅导员:%-8s ",a.fudaoyuan);
+	printf("户籍：%-8s ",a.home);
+	printf("电话：%-11s ",a.tel);
+	printf("加权成绩：%.1f\n",a.sco);
 }
 void get() {
 	FILE *fp;
@@ -57,8 +57,8 @@ void save() {
 void add_student() {
 
 	stu a;
-	cout << "姓名 学号 院系 班级 加权成绩 户籍 电话\n";
-	cout << "加*号为必填项，不详的用#代替\n";
+	cout << "\t\t\t\t\t姓名 学号 院系 班级 辅导员 户籍 电话 加权成绩 \n";
+	cout << "\t\t\t\t\t学号和姓名为必填项，其余不详的项用#代替\n";
 
 	cout << "输入姓名：\n";
 	scanf("%s",a.name);
@@ -88,17 +88,19 @@ void add_student() {
 }
 void delete_student() {
 	string s;
-	cout  << "请输入学号：";
+	cout  << "请输入学号：\n";
 	cin >> s;
 	for(int i = 0; i < v.size(); i++) {
 		if(s == v[i].student_id) {
 			out(v[i]);
-			cout << "确认删除按y,不删除按n:";
+			cout << "确认删除按y,不删除按n:\n";
 			char c;
 			cin >> c;
-			if(c == 'y')	v.erase(v.begin() + i);
-			cout << "已删除\n";
-			break;
+			if(c == 'y') {
+				v.erase(v.begin() + i);
+				cout << "已删除\n";
+				return ;
+			}
 		}
 	}
 	cout << "查无此人\n";
@@ -106,13 +108,12 @@ void delete_student() {
 void modify_student() {
 	char s[20], news[20];
 	float newsco;
-	cout  << "请输入学号：";
+	cout  << "请输入学号：\n";
 	scanf("%s",s);
 	for(int i = 0; i < v.size(); i++) {
-		if(s == v[i].student_id) {
+		if(strcmp(s,v[i].student_id) == 0 ) {
 			stu a = v[i];
 			out(v[i]);
-			cout << "学号为不可修改项!!!\n" ;
 			char c;
 			cout << "修改姓名y/n?:\n";
 			cin >> c;
@@ -121,16 +122,22 @@ void modify_student() {
 				scanf("%s",news);
 				strcpy(a.name, news);
 			}
+			cout << "修改学号y/n?:\n";
+			cin >> c;
+			if(c == 'y') {
+				cout << "请输入新学号:\n";
+				scanf("%s",news);
+				strcpy(a.name, news);
+			}
 			cout << "修改院系y/n?:\n";
-
+			cin >> c;
 			if(c == 'y') {
 				cout << "请输入新院系:\n";
 				scanf("%s",news);
 				strcpy(a.yuan_xi , news);
 			}
-
 			cout << "修改班级y/n?:\n";
-
+			cin >> c;
 			if(c == 'y') {
 				cout << "请输入新班级:\n";
 				scanf("%s",news);
@@ -167,7 +174,7 @@ void modify_student() {
 				a.sco = newsco;
 			}
 			v[i] = a;
-			break;
+			return ;
 		}
 	}
 	cout << "查无此人\n";
@@ -187,44 +194,65 @@ void query_student() {
 }
 void sort_out_student() {
 	int n;
-	cout << "1.按加权成绩降序排序\n";
-	cout << "2.按加权成绩升序排序\n";
-	cout << "3.按学号降序排序\n";
-	cout << "4.按学号升序排序\n";
-	cout << "请输入1-4\n";
+	cout << "\t\t\t\t\t\t\t1.按学号降序排序\n";
+	cout << "\t\t\t\t\t\t\t2.按学号升序排序\n";
+	cout << "\t\t\t\t\t\t\t3.按加权成绩降序排序\n";
+	cout << "\t\t\t\t\t\t\t4.按加权成绩升序排序\n";
+	cout << "请输入序号1-4\n";
 	cin >> n;
 	if(n == 1) sort(v.begin(), v.end(), cmp1);
 	if(n == 2) sort(v.begin(), v.end(), cmp2);
 	if(n == 3) sort(v.begin(), v.end(), cmp3);
 	if(n == 4) sort(v.begin(), v.end(), cmp4);
+
+	if(v.size() == 0) {
+		cout << "数据库内无记录\n";
+		return ;
+	}
 	for(int i = 0; i < v.size(); i++ ) {
 		out(v[i]);
 		cout << endl;
 	}
-
+}
+void ruin_all () {
+	cout << "确认清空系统数据，此操作不可撤回\n";
+	cout << "确认：y/n?\n";
+	char c;
+	cin >> c;
+	if(c == 'y') {
+		vector<stu> a;
+		v = a;
+		cout << "系统数据已清空\n";
+	}
 }
 int main() {
 	get();
 	int choice = 9;
-	while(choice != 6) {
+	while(choice != 7) {
 		system("pause");
 		system("cls");
-		cout << "\t\t\t\t\t\t\t学生信息管理系统\n";
+		cout << "\t\t\t\t\t\t********学生信息管理系统********\n";
 		cout << "\t\t\t\t\t\t\t1.增添学生信息\n";
 		cout << "\t\t\t\t\t\t\t2.删除学生信息\n";
 		cout << "\t\t\t\t\t\t\t3.修改学生信息\n";
 		cout << "\t\t\t\t\t\t\t4.查询学生信息\n";
 		cout << "\t\t\t\t\t\t\t5.排序汇总学生信息\n";
-		cout << "\t\t\t\t\t\t\t6.保存并退出\n";
-		cout << "请输入序号1-6:";
-		cin >> choice;
-		if(choice < 1 || choice > 6)
-			cout << "对不起，您输入的序号不在1-6中，重新输入：\n";
+		cout << "\t\t\t\t\t\t\t6.清空系统数据\n";
+		cout << "\t\t\t\t\t\t\t7.保存并退出\n";
+		cout << "请输入序号1-7:\n";
+		string is_correct_in;
+		cin >> is_correct_in;
+		cout << endl;
+		if(is_correct_in.size() == 1)	choice =is_correct_in[0] - '0';
+		else							choice = 8;
+		if(choice < 1 || choice > 7)
+			cout << "对不起，您输入的序号不在1-7中，重新输入：\n";
 		if(choice == 1) add_student();
 		if(choice == 2) delete_student();
 		if(choice == 3) modify_student();
 		if(choice == 4) query_student();
 		if(choice == 5) sort_out_student();
+		if(choice == 6)	ruin_all();
 		save();
 	}
 	return 0;
