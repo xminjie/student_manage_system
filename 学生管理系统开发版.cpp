@@ -7,8 +7,7 @@
 using namespace std;
 
 struct stu {
-	char name[20], student_id[20], yuan_xi[20], class_num[20], fudaoyuan[20], home[20], tel[20];
-	float sco;
+	char name[20], student_id[20], yuan_xi[20], class_num[20], fudaoyuan[20], home[20], tel[20], sco[20];
 };
 vector<stu> v;
 bool cmp1 (stu x, stu y) {
@@ -18,10 +17,10 @@ bool cmp2 (stu x, stu y) {
 	return strcmp(x.student_id,y.student_id) == -1;
 }
 bool cmp3 (stu x, stu y) {
-	return x.sco > y.sco;
+	return strcmp(x.sco,y.sco) == -1;
 }
 bool cmp4 (stu x, stu y) {
-	return x.sco < y.sco;
+	return strcmp(x.sco,y.sco) == -1;
 }
 void out(stu a) {
 	printf("学号：%-10s ",a.student_id);
@@ -31,7 +30,7 @@ void out(stu a) {
 	printf("辅导员:%-8s ",a.fudaoyuan);
 	printf("户籍：%-8s ",a.home);
 	printf("电话：%-11s ",a.tel);
-	printf("加权成绩：%.1f\n",a.sco);
+	printf("加权成绩：%s\n",a.sco);
 }
 void get() {
 	FILE *fp;
@@ -82,7 +81,7 @@ void add_student() {
 	scanf("%s",a.tel);
 
 	cout << "输入加权成绩（保留一位小数）：\n";
-	cin >> a.sco;
+	scanf("%s",a.sco);
 
 	v.push_back(a);
 }
@@ -107,7 +106,6 @@ void delete_student() {
 }
 void modify_student() {
 	char s[20], news[20];
-	float newsco;
 	cout  << "请输入学号：\n";
 	scanf("%s",s);
 	for(int i = 0; i < v.size(); i++) {
@@ -170,8 +168,8 @@ void modify_student() {
 			cin >> c;
 			if(c == 'y') {
 				cout << "请输入新加权成绩:\n";
-				cin >> newsco;
-				a.sco = newsco;
+				cin >> news;
+				strcpy(a.sco , news);
 			}
 			v[i] = a;
 			return ;
@@ -193,26 +191,25 @@ void query_student() {
 	if(flag == 0) cout << "查无此人\n";
 }
 void sort_out_student() {
-	int n;
+	int n = 5;
+	string s;
 	cout << "\t\t\t\t\t\t\t1.按学号降序排序\n";
 	cout << "\t\t\t\t\t\t\t2.按学号升序排序\n";
 	cout << "\t\t\t\t\t\t\t3.按加权成绩降序排序\n";
 	cout << "\t\t\t\t\t\t\t4.按加权成绩升序排序\n";
-	cout << "请输入序号1-4\n";
-	cin >> n;
+	cout << "请输入序号1-4:\n";
+	cin >> s; 
+	if(s.size() == 1)	n = s[0] - '0'; 
 	if(n == 1) sort(v.begin(), v.end(), cmp1);
-	if(n == 2) sort(v.begin(), v.end(), cmp2);
-	if(n == 3) sort(v.begin(), v.end(), cmp3);
-	if(n == 4) sort(v.begin(), v.end(), cmp4);
-
-	if(v.size() == 0) {
-		cout << "数据库内无记录\n";
-		return ;
-	}
-	for(int i = 0; i < v.size(); i++ ) {
-		out(v[i]);
-		cout << endl;
-	}
+	else if(n == 2) sort(v.begin(), v.end(), cmp2);
+	else if(n == 3) sort(v.begin(), v.end(), cmp3);
+	else if(n == 4) sort(v.begin(), v.end(), cmp4);
+	else {
+		cout << "您未按照要求输入，系统默认按学号升序排序:\n";
+		sort(v.begin(), v.end(), cmp2);
+		} 
+	for(int i = 0; i < v.size(); i++ ) 	out(v[i]);
+	if(v.size() == 0)	cout << "数据库内无记录\n";
 }
 void ruin_all () {
 	cout << "确认清空系统数据，此操作不可撤回\n";
